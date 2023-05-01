@@ -40,10 +40,10 @@ public class RetrofitAdapter extends RecyclerView.Adapter<RetrofitAdapter.Holder
     @Override
     public void onBindViewHolder(@NonNull HolderRetrofit holder, int position) {
         holder.memeText.setText(memeResults.get(position).getTitle());
-        Glide.with(mContext).load(memeResults.get(position).getPreview())
+        /**Glide.with(mContext).load(memeResults.get(position).getPreview())
                 .placeholder(R.drawable.ic_launcher_background)
                 .error(R.drawable.ic_launcher_foreground).into(holder.memeImage);
-    }
+    */}
 
     @Override
     public int getItemCount() {

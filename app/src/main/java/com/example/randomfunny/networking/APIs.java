@@ -9,5 +9,5 @@ public interface APIs {
     String BASE_URL = "https://meme-api.com/";
 
     @GET("gimme")
-    Call<List<MemeResult>> getMemes();
+    Call<MemeResult> getMemes();
 }

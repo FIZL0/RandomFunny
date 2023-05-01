@@ -1,59 +1,64 @@
 package com.example.randomfunny;
 
-import android.app.AppComponentFactory;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.randomfunny.adapters.RetrofitAdapter;
 import com.example.randomfunny.networking.MemeResult;
 import com.example.randomfunny.networking.RetrofitClient;
+import com.squareup.picasso.Picasso;
 
-import java.util.List;
+import java.io.InputStream;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ActivityMemeResult extends AppCompatActivity {
-    RecyclerView memeRecycler;
 
-    RecyclerView initialScreen;
+    ImageView memeOutput;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meme_image);
-        memeRecycler = findViewById(R.id.memeRecycler);
+
+        memeOutput = findViewById(R.id.memeOutput);
 
         getMeme();
     }
 
     private void getMeme() {
-        Call<List<MemeResult>> apiCall = RetrofitClient.getInstance().getApis().getMemes();
-        apiCall.enqueue(new Callback<List<MemeResult>>() {
+        Call<MemeResult> apiCall = RetrofitClient.getInstance().getApis().getMemes();
+        apiCall.enqueue(new Callback<MemeResult>() {
             @Override
-            public void onResponse(Call<List<MemeResult>> call, Response<List<MemeResult>> response) {
-                List<MemeResult> memeResults = response.body();
-                Toast.makeText(ActivityMemeResult.this, "Got Meme", Toast.LENGTH_SHORT).show();
-                setAdapter(memeResults);
+            public void onResponse(Call<MemeResult> call, Response<MemeResult> response) {
+                MemeResult memeResults = response.body();
+
+                String title = memeResults.getTitle();
+                String url = memeResults.toString();
+
+                TextView memeTitle = findViewById(R.id.memeTitle);
+                memeTitle.setText(title);
+
+                Picasso.get().load(url).into(memeOutput);
+
             }
 
             @Override
-            public void onFailure(Call<List<MemeResult>> call, Throwable t) {
-                Toast.makeText(ActivityMemeResult.this, "Error", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<MemeResult> call, Throwable t) {
+                Toast.makeText(ActivityMemeResult.this, "Unable to get meme, check internet connection. Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private void setAdapter(List<MemeResult> memeResults) {
-        memeRecycler.setLayoutManager(new LinearLayoutManager(this));
-        RetrofitAdapter RetrofitAdapter = new RetrofitAdapter(this, memeResults);
-        memeRecycler.setAdapter(RetrofitAdapter);
     }
 }
 
