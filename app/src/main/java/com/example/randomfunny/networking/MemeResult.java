@@ -10,7 +10,6 @@ public class MemeResult {
     @SerializedName("url")
     String url;
 
-
     public String getTitle() {
         return title;
     }
